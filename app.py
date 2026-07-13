@@ -183,7 +183,7 @@ div.stButton > button:hover {
 
 st.markdown('<div class="market-eyebrow">Order No. ' + str(pd.Timestamp.now().strftime("%H%M%S")) + '</div>', unsafe_allow_html=True)
 st.markdown('<div class="market-title">Rating Ticket</div>', unsafe_allow_html=True)
-st.markdown('<div class="market-subtitle">Fill the order slip below and we\'ll print a predicted rating for the house.</div>', unsafe_allow_html=True)
+st.markdown('<div class="market-subtitle">Fill the order slip below and we\'ll print a predicted rating for the shop.</div>', unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # Known category values, pulled from the actual training
