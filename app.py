@@ -6,10 +6,184 @@ import pickle
 # Load trained model
 model = pickle.load(open("gb_model.pkl", "rb"))
 
-st.set_page_config(page_title="Restaurant Rating Prediction", layout="centered")
+st.set_page_config(page_title="Rating Ticket", page_icon="\U0001F372", layout="centered")
 
-st.title("Restaurant Rating Prediction System")
-st.write("Enter restaurant details to predict its aggregate rating")
+# =========================================================
+# Theme: "Night Market" - a warm, after-dark food-stall look.
+# Display face: Fraunces (characterful serif, used for headers)
+# Body face: Inter
+# Utility face: IBM Plex Mono (drives the printed-ticket signature)
+# =========================================================
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+    --bg: #211D1A;
+    --surface: #2C2620;
+    --surface-2: #362F27;
+    --gold: #E3A857;
+    --chili: #C1432D;
+    --curry: #7C9463;
+    --cream: #F3EAD9;
+    --muted: #B7A890;
+}
+
+[data-testid="stAppViewContainer"] {
+    background: var(--bg);
+}
+[data-testid="stHeader"] {
+    background: transparent;
+}
+html, body, [class*="css"] {
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+}
+
+.market-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 2.6rem;
+    color: var(--cream);
+    letter-spacing: -0.01em;
+    margin-bottom: 0;
+    line-height: 1.05;
+}
+.market-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 0.4rem;
+}
+.market-subtitle {
+    color: var(--muted);
+    font-size: 0.98rem;
+    margin-top: 0.3rem;
+    margin-bottom: 1.6rem;
+}
+
+/* Tabs */
+[data-testid="stTabs"] button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    color: var(--muted);
+}
+[data-testid="stTabs"] button[aria-selected="true"] {
+    color: var(--gold) !important;
+    border-bottom-color: var(--gold) !important;
+}
+[data-testid="stTabs"] [data-baseweb="tab-highlight"] {
+    background-color: var(--gold) !important;
+}
+
+/* Inputs */
+[data-testid="stSelectbox"] label, [data-testid="stNumberInput"] label,
+[data-testid="stSlider"] label, .stToggle label {
+    color: var(--muted) !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+[data-baseweb="select"] > div, input[type="number"] {
+    background-color: var(--surface) !important;
+    border-color: #4A4038 !important;
+    color: var(--cream) !important;
+}
+
+/* Predict button */
+div.stButton > button {
+    width: 100%;
+    background: var(--chili);
+    color: var(--cream);
+    border: none;
+    border-radius: 4px;
+    padding: 0.7rem 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    transition: background 0.15s ease;
+}
+div.stButton > button:hover {
+    background: #A6371F;
+    color: var(--cream);
+}
+
+/* The printed ticket */
+.ticket {
+    background: #FAF6EC;
+    color: #221D19;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 1.6rem 1.5rem 1.2rem 1.5rem;
+    margin-top: 1.6rem;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    clip-path: polygon(
+        0% 0%, 100% 0%, 100% 96%,
+        95% 100%, 90% 96%, 85% 100%, 80% 96%, 75% 100%, 70% 96%, 65% 100%,
+        60% 96%, 55% 100%, 50% 96%, 45% 100%, 40% 96%, 35% 100%, 30% 96%,
+        25% 100%, 20% 96%, 15% 100%, 10% 96%, 5% 100%, 0% 96%
+    );
+}
+.ticket-head {
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.1rem;
+}
+.ticket-sub {
+    text-align: center;
+    font-size: 0.72rem;
+    color: #6B6053;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 0.9rem;
+}
+.ticket-divider {
+    border-top: 1px dashed #B7A890;
+    margin: 0.7rem 0;
+}
+.ticket-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 0.12rem 0;
+}
+.ticket-row span:first-child { color: #6B6053; }
+.ticket-stars {
+    text-align: center;
+    font-size: 1.4rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin: 0.5rem 0 0.2rem 0;
+}
+.ticket-score {
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 2.4rem;
+    margin: 0.1rem 0 0.1rem 0;
+}
+.badge {
+    display: inline-block;
+    padding: 0.15rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin: 0.3rem auto 0.6rem auto;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="market-eyebrow">Order No. ' + str(pd.Timestamp.now().strftime("%H%M%S")) + '</div>', unsafe_allow_html=True)
+st.markdown('<div class="market-title">Rating Ticket</div>', unsafe_allow_html=True)
+st.markdown('<div class="market-subtitle">Fill the order slip below and we\'ll print a predicted rating for the house.</div>', unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # Known category values, pulled from the actual training
@@ -18,8 +192,6 @@ st.write("Enter restaurant details to predict its aggregate rating")
 # so we rebuild the SAME encoders here to match the model.
 # ---------------------------------------------------------
 
-# Zomato's official Country Code -> Country Name mapping
-# (only the 15 codes that actually appear in the training data)
 COUNTRY_CODES = {
     "India": 1, "Australia": 14, "Brazil": 30, "Canada": 37,
     "Indonesia": 94, "New Zealand": 148, "Philippines": 162, "Qatar": 166,
@@ -40,11 +212,18 @@ city_le = LabelEncoder().fit(CITIES)
 currency_le = LabelEncoder().fit(CURRENCIES)
 cuisines_le = LabelEncoder().fit(CUISINES)
 locality_le = LabelEncoder().fit(LOCALITIES)
-yesno_le = LabelEncoder().fit(["No", "Yes"])  # No=0, Yes=1 (alphabetical)
-
-# "Switch to order menu" only ever had the value "No" in the training
-# data, so its encoder only knows one class - it's effectively constant.
+yesno_le = LabelEncoder().fit(["No", "Yes"])
 switch_menu_le = LabelEncoder().fit(["No"])
+
+RATING_COLORS = {
+    "Not rated": ("#B7A890", "#221D19"),
+    "Poor": ("#C1432D", "#FAF6EC"),
+    "Average": ("#C98A2E", "#FAF6EC"),
+    "Good": ("#8A9A5B", "#221D19"),
+    "Very Good": ("#5E8C61", "#FAF6EC"),
+    "Excellent": ("#3F6B4B", "#FAF6EC"),
+}
+
 
 def get_rating_category(rating):
     """Maps a numeric rating to Zomato's rating text category,
@@ -63,36 +242,58 @@ def get_rating_category(rating):
         return "Excellent"
 
 
-# Input fields
-country_name = st.selectbox("Country", sorted(COUNTRY_CODES.keys()))
-city = st.selectbox("City", CITIES)
-locality = st.selectbox("Locality", LOCALITIES)
-longitude = st.number_input("Longitude", value=0.0, format="%.6f")
-latitude = st.number_input("Latitude", value=0.0, format="%.6f")
-cuisines = st.selectbox("Cuisines", CUISINES)
-avg_cost_for_two = st.number_input("Average Cost for Two", min_value=0.0, value=500.0)
-currency = st.selectbox("Currency", CURRENCIES)
-has_table_booking = st.selectbox("Has Table Booking?", ["Yes", "No"])
-has_online_delivery = st.selectbox("Has Online Delivery?", ["Yes", "No"])
-is_delivering_now = st.selectbox("Is Delivering Now?", ["Yes", "No"])
-price_range = st.selectbox(
-    "Price Range",
-    [1, 2, 3, 4],
-    format_func=lambda x: {
-        1: "Cheap",
-        2: "Moderate",
-        3: "Expensive",
-        4: "Very Expensive"
-    }[x]
+def stars_for(rating):
+    full = int(round(rating))
+    full = max(0, min(5, full))
+    return "\u2605" * full + "\u2606" * (5 - full)
+
+
+# ---------------------------------------------------------
+# Order slip - tabbed like courses on a menu, instead of one
+# long vertical stack of fields.
+# ---------------------------------------------------------
+tab_location, tab_menu, tab_service, tab_buzz = st.tabs(
+    ["\U0001F4CD  Location", "\U0001F35C  Menu & Price", "\U0001F6CE\uFE0F  Service", "\U0001F4C8  Popularity"]
 )
-votes = st.number_input("Votes", min_value=0, value=50)
+
+with tab_location:
+    country_name = st.selectbox("Country", sorted(COUNTRY_CODES.keys()))
+    city = st.selectbox("City", CITIES)
+    locality = st.selectbox("Locality", LOCALITIES)
+    col_lon, col_lat = st.columns(2)
+    with col_lon:
+        longitude = st.number_input("Longitude", value=0.0, format="%.6f")
+    with col_lat:
+        latitude = st.number_input("Latitude", value=0.0, format="%.6f")
+
+with tab_menu:
+    cuisines = st.selectbox("Cuisines", CUISINES)
+    avg_cost_for_two = st.number_input("Average Cost for Two", min_value=0.0, value=500.0)
+    currency = st.selectbox("Currency", CURRENCIES)
+    price_range = st.select_slider(
+        "Price Range",
+        options=[1, 2, 3, 4],
+        format_func=lambda x: {1: "Cheap", 2: "Moderate", 3: "Expensive", 4: "Very Expensive"}[x]
+    )
+
+with tab_service:
+    has_table_booking = st.toggle("Has Table Booking")
+    has_online_delivery = st.toggle("Has Online Delivery")
+    is_delivering_now = st.toggle("Is Delivering Right Now")
+
+with tab_buzz:
+    votes = st.slider("Votes", min_value=0, max_value=5000, value=50, step=10)
+
+st.write("")
 
 # Predict button
-if st.button("Predict Rating"):
-    # "Switch to order menu" is constant ("No") in the training data
+if st.button("Print Rating Ticket"):
     switch_to_order_menu = "No"
-
     cost_per_person = avg_cost_for_two / 2
+
+    has_table_booking_val = "Yes" if has_table_booking else "No"
+    has_online_delivery_val = "Yes" if has_online_delivery else "No"
+    is_delivering_now_val = "Yes" if is_delivering_now else "No"
 
     input_data = pd.DataFrame([{
         "Country Code": COUNTRY_CODES[country_name],
@@ -103,9 +304,9 @@ if st.button("Predict Rating"):
         "Cuisines": cuisines_le.transform([cuisines])[0],
         "Average Cost for two": avg_cost_for_two,
         "Currency": currency_le.transform([currency])[0],
-        "Has Table booking": yesno_le.transform([has_table_booking])[0],
-        "Has Online delivery": yesno_le.transform([has_online_delivery])[0],
-        "Is delivering now": yesno_le.transform([is_delivering_now])[0],
+        "Has Table booking": yesno_le.transform([has_table_booking_val])[0],
+        "Has Online delivery": yesno_le.transform([has_online_delivery_val])[0],
+        "Is delivering now": yesno_le.transform([is_delivering_now_val])[0],
         "Switch to order menu": switch_menu_le.transform([switch_to_order_menu])[0],
         "Price range": price_range,
         "Votes": votes,
@@ -114,28 +315,30 @@ if st.button("Predict Rating"):
 
     prediction = model.predict(input_data)[0]
     rating_category = get_rating_category(prediction)
+    badge_bg, badge_fg = RATING_COLORS[rating_category]
 
-    st.success(f"Predicted Aggregate Rating: {prediction:.2f} / 5")
-    st.write(f"**Rating Category:** {rating_category}")
-
-    st.write(f"**Added Column - Cost Per Person:** {cost_per_person:,.2f}")
-
-    st.info(f"""
-Input Summary:
-Predicted Rating: {prediction:.2f} / 5 ({rating_category})
-Country: {country_name}
-City: {city}
-Locality: {locality}
-Longitude: {longitude}
-Latitude: {latitude}
-Cuisines: {cuisines}
-Average Cost for Two: {avg_cost_for_two}
-Currency: {currency}
-Has Table Booking: {has_table_booking}
-Has Online Delivery: {has_online_delivery}
-Is Delivering Now: {is_delivering_now}
-Switch to Order Menu: {switch_to_order_menu}
-Price Range: {price_range}
-Votes: {votes}
-Cost Per Person: {cost_per_person:,.2f}
-""")
+    ticket_html = f"""
+    <div class="ticket">
+        <div class="ticket-head">{city.upper()} \u00B7 {country_name}</div>
+        <div class="ticket-sub">Predicted Rating Slip</div>
+        <div class="ticket-stars">{stars_for(prediction)}</div>
+        <div class="ticket-score">{prediction:.2f} / 5</div>
+        <div style="text-align:center; margin-bottom:0.9rem;">
+            <span class="badge" style="background:{badge_bg}; color:{badge_fg};">{rating_category}</span>
+        </div>
+        <div class="ticket-divider"></div>
+        <div class="ticket-row"><span>Locality</span><span>{locality}</span></div>
+        <div class="ticket-row"><span>Cuisines</span><span>{cuisines}</span></div>
+        <div class="ticket-row"><span>Avg Cost for Two</span><span>{avg_cost_for_two:,.0f} {currency}</span></div>
+        <div class="ticket-row"><span>Cost per Person</span><span>{cost_per_person:,.2f} {currency}</span></div>
+        <div class="ticket-row"><span>Price Range</span><span>{ {1:"Cheap",2:"Moderate",3:"Expensive",4:"Very Expensive"}[price_range] }</span></div>
+        <div class="ticket-divider"></div>
+        <div class="ticket-row"><span>Table Booking</span><span>{has_table_booking_val}</span></div>
+        <div class="ticket-row"><span>Online Delivery</span><span>{has_online_delivery_val}</span></div>
+        <div class="ticket-row"><span>Delivering Now</span><span>{is_delivering_now_val}</span></div>
+        <div class="ticket-divider"></div>
+        <div class="ticket-row"><span>Votes on Record</span><span>{votes}</span></div>
+        <div class="ticket-row"><span>Lat / Long</span><span>{latitude:.4f}, {longitude:.4f}</span></div>
+    </div>
+    """
+    st.markdown(ticket_html, unsafe_allow_html=True)
