@@ -6,7 +6,7 @@ import pickle
 # Load trained model
 model = pickle.load(open("gb_model.pkl", "rb"))
 
-st.set_page_config(page_title="Rating Ticket", page_icon="\U0001F372", layout="centered")
+st.set_page_config(page_title="Rating For The Shop", page_icon="\U0001F372", layout="centered")
 
 # =========================================================
 # Theme: "Night Market" - a warm, after-dark food-stall look.
