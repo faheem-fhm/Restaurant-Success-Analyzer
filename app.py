@@ -319,7 +319,7 @@ if st.button("Print Rating The Shop"):
     ticket_html = f"""
     <div class="ticket">
         <div class="ticket-head">{city.upper()} \u00B7 {country_name}</div>
-        <div class="ticket-sub">Predicted Rating Slip</div>
+        <div class="ticket-sub">Predicted Rating The Shop</div>
         <div class="ticket-stars">{stars_for(prediction)}</div>
         <div class="ticket-score">{prediction:.2f} / 5</div>
         <div style="text-align:center; margin-bottom:0.9rem;">
