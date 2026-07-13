@@ -6,7 +6,7 @@ import pickle
 # Load trained model
 model = pickle.load(open("gb_model.pkl", "rb"))
 
-st.set_page_config(page_title="Rating For The Shop", page_icon="\U0001F372", layout="centered")
+st.set_page_config(page_title="Rating The Shop", page_icon="\U0001F372", layout="centered")
 
 # =========================================================
 # Theme: "Night Market" - a warm, after-dark food-stall look.
@@ -287,7 +287,7 @@ with tab_buzz:
 st.write("")
 
 # Predict button
-if st.button("Print Rating Ticket"):
+if st.button("Print Rating The Shop"):
     switch_to_order_menu = "No"
     cost_per_person = avg_cost_for_two / 2
 
